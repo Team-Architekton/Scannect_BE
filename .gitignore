@@ -1,0 +1,6 @@
+target/
+*.log
+*.jar
+application.properties
+.idea/
+.DS_Store
