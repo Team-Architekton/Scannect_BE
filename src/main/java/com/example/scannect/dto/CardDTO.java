@@ -9,6 +9,7 @@ public class CardDTO {
     private Long id; //명함 Id
     private String userId; //명함 생성한 유저의 아이디 (FK)
     private String cardName; //생성 명함 이름
+    private String nickname; //유저 닉네임
     private String email; //이메일
     private String job; //직업 or 직무
     private String industry; //업종

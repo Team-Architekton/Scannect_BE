@@ -18,12 +18,12 @@
     <!--명함 생성-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO card (
-            user_id, card_name, email, job, industry, belong_to, department,
+            user_id, card_name, nickname, email, job, industry, belong_to, department,
             position, content, company_tel, phone_num, img_url, colour,
             is_active, is_main, created_at, updated_at
         )
         VALUES (
-                   #{userId}, #{cardName}, #{email}, #{job}, #{industry}, #{belongTo}, #{department},
+                   #{userId}, #{cardName}, #{nickname}, #{email}, #{job}, #{industry}, #{belongTo}, #{department},
                    #{position}, #{content}, #{companyTel}, #{phoneNum}, #{imgUrl}, #{colour},
                    TRUE, FALSE, NOW(), NOW()
                )
@@ -34,6 +34,7 @@
         UPDATE card
         SET card_name = #{cardName},
             email = #{email},
+            nickname = #{nickname},
             job = #{job},
             industry = #{industry},
             belong_to = #{belongTo},
