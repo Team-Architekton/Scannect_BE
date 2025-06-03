@@ -1,10 +1,17 @@
-HELP.md
+# Build artifacts
 target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+build/
+*.log
+*.jar
+.DS_Store
 
-### STS ###
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse / STS
 .apt_generated
 .classpath
 .factorypath
@@ -13,21 +20,24 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
+
+# VS Code
+.vscode/
+
+# Local config
+application.properties
+
+# Maven Wrapper
+!.mvn/wrapper/maven-wrapper.jar
+
+# Exclude generated build dirs in source
 !**/src/main/**/build/
 !**/src/test/**/build/
-
-### VS Code ###
-.vscode/
+!**/src/main/**/target/
+!**/src/test/**/target/
