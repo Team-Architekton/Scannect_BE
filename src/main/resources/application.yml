@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: scannect
+
+  profiles:
+    active: prod
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/scannect
+    username: root
+    password: 0507dnwls@
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  logging:
+    level:
+      org.mybatis: DEBUG
+      com.example.scannect.mapper: DEBUG
+
+  thymeleaf:
+    cache: false
+    check-template-location: true
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML  # 'DEBUG' → 'HTML' 또는 생략 가능
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.example.scannect.dto
+  configuration:
+    map-underscore-to-camel-case: true
+
+server:
+  port: 8080
+
+naver:
+  service:
+    url: https://clovaocr-api-kr.ncloud.com/external/v1/41968/4a9d65b9f0ec5aceb0ee68b1d701ece780a06e28d09b748f3657a88a76c02088
+    secretKey: ZXlKZU9CUUpBZFBjYkF4c3pUdm5xSVBRbW15TE9BUmI=

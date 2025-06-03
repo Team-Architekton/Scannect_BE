@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.scannect.mapper.CardExchangeMapper">
+
+    <insert id="insertExchange" parameterType="com.example.scannect.dto.CardExchangeDTO">
+        INSERT INTO card_exchange (
+            from_user_id,
+            to_user_id,
+            card_id,
+            method,
+            exchanged_at,
+            status
+        ) VALUES (
+            #{fromUserId},
+            #{toUserId},
+            #{cardId},
+            #{method},
+            #{exchangedAt},
+            #{status}
+        )
+    </insert>
+
+    <select id="findById" resultType="com.example.scannect.dto.CardExchangeDTO">
+        SELECT * FROM card_exchange WHERE exchange_id = #{exchange_id}
+    </select>
+
+    <select id="findAllByUserId" resultType="com.example.scannect.dto.CardExchangeDTO">
+        SELECT *
+        FROM card_exchange
+        WHERE from_user_id = #{userId} OR to_user_id = #{userId}
+        ORDER BY exchanged_at DESC
+    </select>
+
+    <update id="updateStatus">
+        UPDATE card_exchange
+        SET status = #{status}
+        WHERE exchange_id = #{exchange_id}
+    </update>
+    <select id="existsExchange" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM card_exchange
+            WHERE from_user_id = #{fromUserId}
+            AND to_user_id = #{toUserId}
+            AND card_id = #{cardId}
+        )
+        </select>
+
+</mapper>

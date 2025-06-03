@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.scannect.mapper.CardMapper">
+    <!--개별 명함 조회 -->
+    <select id="findById" resultType="com.example.scannect.dto.CardDTO">
+        SELECT * FROM card WHERE id = #{id}
+    </select>
+
+    <!--전체 명함 리스트 조회 -->
+    <select id="findAllByUserId" resultType="com.example.scannect.dto.CardDTO">
+        SELECT * FROM card WHERE user_id = #{userId} AND is_active = TRUE
+        ORDER BY created_at DESC
+    </select>
+
+    <!--명함 생성-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO card (
+            user_id, card_name, email, job, industry, belong_to, department,
+            position, content, company_tel, phone_num, img_url, colour,
+            is_active, is_main, created_at, updated_at
+        )
+        VALUES (
+                   #{userId}, #{cardName}, #{email}, #{job}, #{industry}, #{belongTo}, #{department},
+                   #{position}, #{content}, #{companyTel}, #{phoneNum}, #{imgUrl}, #{colour},
+                   TRUE, FALSE, NOW(), NOW()
+               )
+    </insert>
+
+    <!--명함 수정 -->
+    <update id="update">
+        UPDATE card
+        SET card_name = #{cardName},
+            email = #{email},
+            job = #{job},
+            industry = #{industry},
+            belong_to = #{belongTo},
+            department = #{department},
+            position = #{position},
+            content = #{content},
+            company_tel = #{companyTel},
+            phone_num = #{phoneNum},
+            img_url = #{imgUrl},
+            colour = #{colour},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 해당 유저가 가진 명함 수 확인 -->
+    <select id="countByUserId" resultType="int">
+        SELECT COUNT(*) FROM card
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 대표 명함 조회 -->
+    <select id="findMainByUserId" resultType="com.example.scannect.dto.CardDTO">
+        SELECT * FROM card WHERE user_id = #{userId} AND is_main = TRUE LIMIT 1
+    </select>
+
+    <!-- 유저의 메인 명함을 모두 is_main = false 로 바꿈 -->
+    <update id="unsetMainCard">
+        UPDATE card
+        SET is_main = FALSE
+        WHERE user_id = #{userId} AND is_main = TRUE
+    </update>
+
+    <!-- 특정 명함을 is_main = true 로 설정 -->
+    <update id="setMainCardById">
+        UPDATE card
+        SET is_main = TRUE
+        WHERE id = #{id}
+    </update>
+
+    <!-- 개별 명함 삭제 -->
+    <delete id="deleteById">
+        DELETE FROM card WHERE id = #{id}
+    </delete>
+
+    <!-- 전체 삭제 -->
+    <delete id="deleteAllByUserId">
+        DELETE FROM card WHERE user_id = #{userId}
+    </delete>
+</mapper>

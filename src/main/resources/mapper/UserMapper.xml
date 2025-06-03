@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.scannect.mapper.UserMapper">
+
+    <select id="findById" resultType="com.example.scannect.dto.UserDTO">
+        SELECT * FROM user WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (password, name, created_at, updated_at)
+        VALUES (#{password}, #{name}, NOW(), NOW())
+    </insert>
+
+    <select id="login" parameterType="map" resultType="com.example.scannect.dto.UserDTO">
+        SELECT id, name
+        FROM user
+        WHERE id = #{id} AND password = #{password}
+    </select>
+</mapper>

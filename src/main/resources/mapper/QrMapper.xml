@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.scannect.mapper.QrMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO qr (
+            card_id, token, created_at, updated_at, expires_at
+        ) VALUES (
+                     #{cardId}, #{token}, NOW(), NOW(), #{expiresAt}
+                 )
+    </insert>
+
+    <select id="findByCardId" resultType="com.example.scannect.dto.QrDTO">
+        SELECT * FROM qr WHERE card_id = #{cardId}
+    </select>
+
+    <select id="findByToken" resultType="com.example.scannect.dto.QrDTO">
+        SELECT * FROM qr WHERE token = #{token}
+    </select>
+
+    <update id="update">
+        UPDATE qr
+        SET updated_at = NOW(),
+            expires_at = #{expiresAt}
+        WHERE id = #{id}
+    </update>
+
+</mapper>
