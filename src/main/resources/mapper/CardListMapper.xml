@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.scannect.mapper.CardListMapper">
+
+    <!-- 명함 저장 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO card_list (
+            user_id, card_id, favorite, memo, is_active,
+            created_at, updated_at
+        )
+        VALUES (
+                   #{userId}, #{cardId}, #{favorite}, #{memo}, TRUE,
+                   NOW(), NOW()
+               )
+    </insert>
+
+    <insert id="insertByWebSocket" parameterType="com.example.scannect.dto.CardListDTO"
+        useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO card_list (
+            user_id, card_id, is_active,
+            created_at, updated_at
+        )
+        VALUES (
+            #{userId}, #{cardId}, TRUE,
+            NOW(), NOW()
+        )
+    </insert>
+
+
+    <!-- 메모 수정 -->
+    <update id="updateMemo">
+        UPDATE card_list
+        SET memo = #{memo}, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 숨기기 / 숨기기 해제 -->
+    <update id="updateActive">
+        UPDATE card_list
+        SET is_active = #{isActive}, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 중요 표시 / 해제 -->
+    <update id="updateFavorite">
+        UPDATE card_list
+        SET favorite = #{favorite}, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 삭제 -->
+    <delete id="delete">
+        DELETE FROM card_list WHERE id = #{id}
+    </delete>
+
+    <!-- 전체 리스트 -->
+    <select id="findAllByUserId" resultType="com.example.scannect.dto.CardListDTO">
+        SELECT * FROM card_list
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 중요 리스트 -->
+    <select id="findFavoritesByUserId" resultType="com.example.scannect.dto.CardListDTO">
+        SELECT * FROM card_list
+        WHERE user_id = #{userId} AND favorite = TRUE
+    </select>
+
+    <!-- 숨김 리스트 -->
+    <select id="findHiddenByUserId" resultType="com.example.scannect.dto.CardListDTO">
+        SELECT * FROM card_list
+        WHERE user_id = #{userId} AND is_active = FALSE
+    </select>
+
+    <!-- 키워드 검색 (memo or card_name 유사 검색) -->
+    <select id="searchByKeyword" resultType="com.example.scannect.dto.CardListDTO">
+        SELECT cl.*
+        FROM card_list cl
+                 JOIN card c ON cl.card_id = c.id
+        WHERE cl.user_id = #{userId}
+          AND (
+            cl.memo LIKE CONCAT('%', #{keyword}, '%')
+                OR c.card_name LIKE CONCAT('%', #{keyword}, '%')
+                OR c.email LIKE CONCAT('%', #{keyword}, '%')
+                OR c.job LIKE CONCAT('%', #{keyword}, '%')
+                OR c.belong_to LIKE CONCAT('%', #{keyword}, '%')
+                OR c.industry LIKE CONCAT('%', #{keyword}, '%')
+                OR c.position LIKE CONCAT('%', #{keyword}, '%')
+            )
+    </select>
+
+
+</mapper>
