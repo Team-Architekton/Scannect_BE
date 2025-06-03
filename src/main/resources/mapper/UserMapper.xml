@@ -9,9 +9,9 @@
         SELECT * FROM user WHERE id = #{id}
     </select>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user (password, name, created_at, updated_at)
-        VALUES (#{password}, #{name}, NOW(), NOW())
+    <insert id="insert">
+        INSERT INTO user (id, password, name, created_at, updated_at)
+        VALUES (#{id}, #{password}, #{name}, NOW(), NOW())
     </insert>
 
     <select id="login" parameterType="map" resultType="com.example.scannect.dto.UserDTO">

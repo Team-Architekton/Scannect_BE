@@ -19,6 +19,7 @@ public class UserController {
         this.userService = userService;
         this.responseService = responseService;
     }
+
     @PostMapping
     public ResponseEntity<ApiResponse<?>> registerUser(@RequestBody UserDTO user) {
 
@@ -27,16 +28,19 @@ public class UserController {
         }
 
         userService.register(user);
-        return ResponseEntity.ok(responseService.successMessage("회원가입 완료"));
+        return ResponseEntity.ok(responseService.success(user, "회원가입 완료"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserDTO> login(@RequestBody UserDTO userRequest) {
+    public ResponseEntity<ApiResponse<?>> login(@RequestBody UserDTO userRequest) {
         UserDTO user = userService.login(userRequest.getId(), userRequest.getPassword());
+
         if (user != null) {
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok(responseService.success(user, "로그인 성공"));
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(responseService.fail("아이디 또는 비밀번호가 일치하지 않습니다."));
         }
     }
 }
+
