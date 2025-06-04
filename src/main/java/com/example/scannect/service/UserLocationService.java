@@ -49,8 +49,26 @@ public class UserLocationService {
      */
     @Transactional
     public void deactivateLocation(String userId) {
+        // 1. 현재 위치 가져오기 (DB에 있는 마지막 위치)
+        UserLocationDTO user = userLocationMapper.findByUserId(userId);
+        if (user == null) return;
+
+        // 2. 현재 위치 기준 반경 10m 이내 유저 탐색
+        List<UserLocationDTO> nearbyUsers = userLocationMapper.findNearbyUsers(
+                user.getLatitude(), user.getLongitude(), userId
+        );
+
+        List<String> nearbyUserIds = nearbyUsers.stream()
+                .map(UserLocationDTO::getUserId)
+                .toList();
+
+        // 3. WebSocket 알림 전송
+        cardExchangeService.notifyUserRemoval(userId, nearbyUserIds);
+
+        // 4. is_active = false로 업데이트
         userLocationMapper.setUserInactive(userId);
     }
+
 
     
 

@@ -10,13 +10,13 @@
         INSERT INTO user_location (
             user_id, latitude, longitude, is_active, updated_at
         ) VALUES (
-                     #{userId}, #{latitude}, #{longitude}, true,  NOW()
-                 )
+            #{userId}, #{latitude}, #{longitude}, true, NOW()
+        )
         ON DUPLICATE KEY UPDATE
-                             latitude = VALUES(latitude),
-                             longitude = VALUES(longitude),
-                             is_active = true,
-                             updated_at = NOW()
+            latitude = #{latitude},
+            longitude = #{longitude},
+            is_active = true,
+            updated_at = NOW()
     </insert>
 
     <!-- 반경 10m 이내 유저 찾기 -->
