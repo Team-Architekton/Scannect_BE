@@ -20,12 +20,7 @@ public class CardListService {
 
     // 명함 저장
     public void save(CardListDTO cardList) {
-        CardListDTO dto = new CardListDTO();
-        dto.setUserId(cardList.getUserId());
-        dto.setCardId(cardList.getCardId());
-        dto.setFavorite(cardList.getFavorite());
-        dto.setMemo(cardList.getMemo());
-        cardListMapper.insert(dto);
+        cardListMapper.insert(cardList);
     }
 
     public void insertByWebSocket(String userId, Long cardId) {
