@@ -59,13 +59,19 @@ public class CardListService {
 
         for (CardListDTO cardListDTO : cardListDTOs) {
             CardDTO card = cardMapper.findById(cardListDTO.getCardId());
-            cardDTOList.add(card);
+            if (card != null) {
+                cardDTOList.add(card);
+            } else {
+                System.out.println("❗ 카드 정보 없음! cardId: " + cardListDTO.getCardId());
+            }
         }
+
         // 명함 리스트 최신순으로 정렬
         Collections.sort(cardDTOList, (card1, card2) -> card2.getCreatedAt().compareTo(card1.getCreatedAt()));
 
         return cardDTOList;
     }
+
 
     // 중요 목록
     public List<CardDTO> getFavorites(String userId) {
