@@ -23,6 +23,7 @@ public class CardDTO {
     private String colour; //명함 색상 ->HEX 코드
     private List<String> urlList;
     private Boolean is_active; //0:숨기기, 1:활성화
+    private Boolean is_main;
     private Timestamp createdAt; //생성 일자
     private Timestamp updatedAt; //수정 일자
 }
