@@ -67,7 +67,7 @@ public class CardListService {
         }
 
         // 명함 리스트 최신순으로 정렬
-        Collections.sort(cardDTOList, (card1, card2) -> card2.getCreatedAt().compareTo(card1.getCreatedAt()));
+        //Collections.sort(cardDTOList, (card1, card2) -> card2.getCreatedAt().compareTo(card1.getCreatedAt()));
 
         return cardDTOList;
     }
