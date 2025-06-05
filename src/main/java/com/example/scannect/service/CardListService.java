@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -53,24 +55,33 @@ public class CardListService {
     }
 
     // 전체 목록 (cardList에 저장된 cardId를 기준으로 card 정보를 조회)
-    public List<CardDTO> getAll(String userId) {
+    public List<Map<String, Object>> getAll(String userId) {
         List<CardListDTO> cardListDTOs = cardListMapper.findAllByUserId(userId);
-        List<CardDTO> cardDTOList = new ArrayList<>();
+        List<Map<String, Object>> resultList = new ArrayList<>();
 
+        // 1. 카드 ID 기준으로 cardListDTOs를 Map에 저장
+        Map<Long, CardListDTO> cardListMap = new HashMap<>();
         for (CardListDTO cardListDTO : cardListDTOs) {
-            CardDTO card = cardMapper.findById(cardListDTO.getCardId());
+            cardListMap.put(cardListDTO.getCardId(), cardListDTO);
+        }
+
+        // 2. cardListMap을 순회하면서 cardDTO 가져오고 묶기
+        for (String cardId : cardListMap.keySet()) {
+            CardDTO card = cardMapper.findById(cardId);
             if (card != null) {
-                cardDTOList.add(card);
+                Map<String, Object> map = new HashMap<>();
+                map.put("cardId", cardId);
+                map.put("card", card);
+                map.put("cardList", cardListMap.get(cardId));
+                resultList.add(map);
             } else {
-                System.out.println("❗ 카드 정보 없음! cardId: " + cardListDTO.getCardId());
+                System.out.println("❗ 카드 정보 없음! cardId: " + cardId);
             }
         }
 
-        // 명함 리스트 최신순으로 정렬
-        //Collections.sort(cardDTOList, (card1, card2) -> card2.getCreatedAt().compareTo(card1.getCreatedAt()));
-
-        return cardDTOList;
+        return resultList;
     }
+
 
 
     // 중요 목록

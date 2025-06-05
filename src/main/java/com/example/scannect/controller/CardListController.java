@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -71,8 +72,8 @@ public class CardListController {
 
     // 6. 전체 리스트 조회
     @GetMapping("/user/{userId}")
-    public ResponseEntity<ApiResponse<List<CardDTO>>> getAll(@PathVariable String userId) {
-        List<CardDTO> list = cardListService.getAll(userId);
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getAll(@PathVariable String userId) {
+        List<Map<String, Object>> list = cardListService.getAll(userId);
         return ResponseEntity.ok(responseService.success(list, "전체 명함 목록 조회"));
     }
 
