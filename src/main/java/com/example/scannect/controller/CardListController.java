@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/card-list")
@@ -23,6 +26,13 @@ public class CardListController {
     }
 
     // 1. 명함 저장
+    @PostMapping()
+    public ResponseEntity<ApiResponse<?>> save(@RequestBody CardListDTO dto) {
+        cardListService.save(dto);
+        return ResponseEntity.ok(responseService.success(null, "명함이 저장되었습니다."));
+    }
+    
+    // 1. 명함 저장(웹소켓)
     @PostMapping("/save")
     public ResponseEntity<ApiResponse<?>> insertByWebSocket(@RequestBody CardListDTO dto) {
         cardListService.insertByWebSocket(dto.getUserId(), dto.getCardId());
