@@ -1,0 +1,26 @@
+package com.example.scannect.controller;
+
+@RestController
+@Slf4j
+@RequiredArgsConstructor
+public class CheckController {
+    private final NaverOcrApi naverApi;
+    @Value("${naver.service.secretKey}")
+    private String secretKey;
+    @GetMapping("/naverOcr")
+    public ResponseEntity ocr() throws IOException {
+        String fileName = "test.jpg"; // 파일 이름
+        File file = ResourceUtils.getFile("classpath:static/ocr_image/"+fileName);
+
+        List<String> result = naverApi.callApi("POST", file.getPath(), secretKey, "jpg");
+        if(!result.equals(null)){
+            for(String s : result){
+                log.info(s);
+            }
+        }else{
+            log.info("null");
+        }
+
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+}
