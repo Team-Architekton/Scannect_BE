@@ -1,57 +1,30 @@
 package com.example.scannect.external.naver;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.apache.tomcat.util.json.JSONParser;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import com.example.scannect.dto.CardDTO;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import java.io.File;
+
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
-
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import com.example.scannect.utils.JsonUtill; // <- 너가 만든 유틸 클래스라면 위치 확인해야 함
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Component
 public class NaverOCRApi {
+
     @Value("${naver.service.url}")
     private String url;
 
-    /**
-     * 네이버 ocr api 호출한다
-     * @param {string} type 호출 메서드 타입
-     * @param {string} filePath 파일 경로
-     * @param {string} naver_secretKey 네이버 시크릿키 값
-     * @param {string} ext 확장자
-     * @returns {List} 추출 text list
-     */
-    public  List<String> callApi(String type, String filePath, String naver_secretKey, String ext) {
-        String apiURL = url;
-        String secretKey = naver_secretKey;
-        String imageFile = filePath;
-        List<String> parseData = null;
-
-        log.info("callApi Start!");
-
+    public CardDTO callApi(String type, String filePath, String naver_secretKey, String ext) {
+        CardDTO cardDTO = new CardDTO();
         try {
-            URL url = new URL(apiURL);
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+            URL apiUrl = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) apiUrl.openConnection();
             con.setUseCaches(false);
             con.setDoInput(true);
             con.setDoOutput(true);
@@ -59,74 +32,48 @@ public class NaverOCRApi {
             con.setRequestMethod(type);
             String boundary = "----" + UUID.randomUUID().toString().replaceAll("-", "");
             con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-            con.setRequestProperty("X-OCR-SECRET", secretKey);
+            con.setRequestProperty("X-OCR-SECRET", naver_secretKey);
 
-            JSONObject json = new JSONObject();
-            json.put("version", "V2");
-            json.put("requestId", UUID.randomUUID().toString());
-            json.put("timestamp", System.currentTimeMillis());
-            JSONObject image = new JSONObject();
-            image.put("format", ext);
-            image.put("name", "demo");
-            JSONArray images = new JSONArray();
-            images.add(image);
-            json.put("images", images);
-            String postParams = json.toString();
+            // JSON body 생성
+            String jsonBody = String.format("{\"version\":\"V2\",\"requestId\":\"%s\",\"timestamp\":%d,\"images\":[{\"format\":\"%s\",\"name\":\"demo\"}]}",
+                    UUID.randomUUID(), System.currentTimeMillis(), ext);
 
             con.connect();
             DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            File file = new File(imageFile);
-            writeMultiPart(wr, postParams, file, boundary);
+            File file = new File(filePath);
+            writeMultiPart(wr, jsonBody, file, boundary);
             wr.close();
 
             int responseCode = con.getResponseCode();
-            BufferedReader br;
-            if (responseCode == 200) {
-                br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            } else {
-                br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-            }
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-            while ((inputLine = br.readLine()) != null) {
-                response.append(inputLine);
-            }
-            br.close();
+            InputStream inputStream = (responseCode == 200) ? con.getInputStream() : con.getErrorStream();
+            String response = new BufferedReader(new InputStreamReader(inputStream))
+                    .lines()
+                    .reduce("", (acc, line) -> acc + line);
 
-            parseData = jsonparse(response);
-
+            cardDTO = parseResponseToCardDTO(response);
 
         } catch (Exception e) {
-            System.out.println(e);
+            log.error("OCR API 호출 중 오류 발생", e);
         }
-        return parseData;
+        return cardDTO;
     }
-    /**
-     * writeMultiPart
-     * @param {OutputStream} out 데이터를 출력
-     * @param {string} jsonMessage 요청 params
-     * @param {File} file 요청 파일
-     * @param {String} boundary 경계
-     */
-    private static void writeMultiPart(OutputStream out, String jsonMessage, File file, String boundary) throws
-            IOException {
+
+    private static void writeMultiPart(OutputStream out, String jsonMessage, File file, String boundary) throws IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("--").append(boundary).append("\r\n");
         sb.append("Content-Disposition:form-data; name=\"message\"\r\n\r\n");
-        sb.append(jsonMessage);
-        sb.append("\r\n");
+        sb.append(jsonMessage).append("\r\n");
 
         out.write(sb.toString().getBytes("UTF-8"));
         out.flush();
 
         if (file != null && file.isFile()) {
             out.write(("--" + boundary + "\r\n").getBytes("UTF-8"));
-            StringBuilder fileString = new StringBuilder();
-            fileString
-                    .append("Content-Disposition:form-data; name=\"file\"; filename=");
-            fileString.append("\"" + file.getName() + "\"\r\n");
-            fileString.append("Content-Type: application/octet-stream\r\n\r\n");
-            out.write(fileString.toString().getBytes("UTF-8"));
+            StringBuilder filePart = new StringBuilder();
+            filePart.append("Content-Disposition:form-data; name=\"file\"; filename=\"")
+                    .append(file.getName()).append("\"\r\n");
+            filePart.append("Content-Type: application/octet-stream\r\n\r\n");
+            out.write(filePart.toString().getBytes("UTF-8"));
             out.flush();
 
             try (FileInputStream fis = new FileInputStream(file)) {
@@ -142,26 +89,27 @@ public class NaverOCRApi {
         }
         out.flush();
     }
-    /**
-     * 데이터 가공
-     * @param {StringBuffer} response 응답값
-     * @returns {List} result text list
-     */
-    private static List<String> jsonparse(StringBuffer response) throws ParseException {
-        //json 파싱
-        JSONParser jp = new JSONParser();
-        JSONObject jobj = (JSONObject) jp.parse(response.toString());
-        //images 배열 obj 화
-        JSONArray JSONArrayPerson = (JSONArray)jobj.get("images");
-        JSONObject JSONObjImage = (JSONObject)JSONArrayPerson.get(0);
-        JSONArray s = (JSONArray) JSONObjImage.get("fields");
-        //
-        List<Map<String, Object>> m = JsonUtill.getListMapFromJsonArray(s);
-        List<String> result = new ArrayList<>();
-        for (Map<String, Object> as : m) {
-            result.add((String) as.get("inferText"));
-        }
 
-        return result;
+    private CardDTO parseResponseToCardDTO(String json) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        OcrResponse response = mapper.readValue(json, OcrResponse.class);
+        CardDTO dto = new CardDTO();
+
+        response.getImages().stream().findFirst().ifPresent(image -> {
+            for (OcrField field : image.getFields()) {
+                switch (field.getName()) {
+                    case "name": dto.setName(field.getInferText()); break;
+                    case "company": dto.setCompany(field.getInferText()); break;
+                    case "tel": dto.setPhone(field.getInferText()); break;
+                    case "email": dto.setEmail(field.getInferText()); break;
+                    case "position": dto.setPosition(field.getInferText()); break;
+                    default: log.debug("Unmapped field: {}", field.getName());
+                }
+            }
+        });
+
+        return dto;
     }
 }

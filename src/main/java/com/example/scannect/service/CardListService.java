@@ -66,7 +66,7 @@ public class CardListService {
         }
 
         // 2. cardListMap을 순회하면서 cardDTO 가져오고 묶기
-        for (String cardId : cardListMap.keySet()) {
+        for (Long cardId : cardListMap.keySet()) {
             CardDTO card = cardMapper.findById(cardId);
             if (card != null) {
                 Map<String, Object> map = new HashMap<>();
