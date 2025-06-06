@@ -71,7 +71,6 @@ public class CardListService {
 
                 Map<String, Object> flatCardInfo = new HashMap<>();
                 flatCardInfo.put("cardId", card.getId());
-                flatCardInfo.put("userId", card.getUserId());
                 flatCardInfo.put("cardName", card.getCardName());
                 flatCardInfo.put("nickname", card.getNickname());
                 flatCardInfo.put("email", card.getEmail());
@@ -85,10 +84,13 @@ public class CardListService {
                 flatCardInfo.put("phoneNum", card.getPhoneNum());
                 flatCardInfo.put("imgUrl", card.getImgUrl());
                 flatCardInfo.put("colour", card.getColour());
-
+                flatCardInfo.put("urlList", card.getUrlList());
                 // cardList에서 필요한 정보만 추가
+                flatCardInfo.put("id", cardList.getId());
+                flatCardInfo.put("userId", cardList.getUserId());
                 flatCardInfo.put("memo", cardList.getMemo());
                 flatCardInfo.put("favorite", cardList.getFavorite());
+                flatCardInfo.put("isActive", cardList.getIsActive());
 
                 resultList.add(flatCardInfo);
             } else {
