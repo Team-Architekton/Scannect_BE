@@ -1,0 +1,36 @@
+package com.example.scannect.controller;
+
+@RestController
+@Slf4j
+@RequiredArgsConstructor
+@RequestMapping("/api/ocr")
+public class CheckController {
+
+    private final NaverOcrApi naverApi;
+
+    @Value("${naver.service.secretKey}")
+    private String secretKey;
+
+    @GetMapping("/naverOcr")
+    public ResponseEntity<List<String>> ocr() throws IOException {
+        String fileName = "test.jpg";
+        File file;
+
+        try {
+            file = ResourceUtils.getFile("classpath:static/ocr_image/" + fileName);
+        } catch (FileNotFoundException e) {
+            log.error("파일을 찾을 수 없습니다: {}", fileName);
+            return ResponseEntity.badRequest().body(Collections.singletonList("파일 없음"));
+        }
+
+        List<String> result = naverApi.callApi("POST", file.getPath(), secretKey, "jpg");
+
+        if (result != null) {
+            result.forEach(log::info);
+        } else {
+            log.info("OCR 결과가 null입니다.");
+        }
+
+        return ResponseEntity.ok(result);
+    }
+}
