@@ -42,7 +42,7 @@ public class CardListController {
 
     // 2. 메모 수정
     @PatchMapping("/{id}/memo")
-    public ResponseEntity<ApiResponse<?>> updateMemo(@PathVariable Long id, @RequestParam String memo) {
+    public ResponseEntity<ApiResponse<?>> updateMemo(@PathVariable Long id, @RequestBody String memo) {
         cardListService.updateMemo(id, memo);
         return ResponseEntity.ok(responseService.successMessage("메모가 수정되었습니다."));
     }
