@@ -3,7 +3,7 @@ package com.example.scannect.controller;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/ocr")
+@RequestMapping("/api")
 public class CheckController {
 
     private final NaverOcrApi naverApi;
