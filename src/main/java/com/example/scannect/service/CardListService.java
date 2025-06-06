@@ -10,10 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -56,30 +54,43 @@ public class CardListService {
         cardListMapper.delete(id);
     }
 
-    // 중복 카드 제거한 전체 목록 조회
     public List<Map<String, Object>> getAll(String userId) {
         List<CardListDTO> cardListDTOs = cardListMapper.findAllByUserId(userId);
         List<Map<String, Object>> resultList = new ArrayList<>();
 
-        // cardId 기준으로 중복 제거된 카드 리스트 저장용 Set
-        Set<Long> seenCardIds = new HashSet<>();
-
+        // 카드 ID 기준으로 중복 제거
+        Map<Long, CardListDTO> cardListMap = new HashMap<>();
         for (CardListDTO cardListDTO : cardListDTOs) {
-            Long cardId = cardListDTO.getCardId();
+            cardListMap.put(cardListDTO.getCardId(), cardListDTO); // 중복 카드 ID 제거
+        }
 
-            // 이미 본 카드 ID면 skip
-            if (seenCardIds.contains(cardId)) continue;
-
-            // card 정보 가져오기
+        for (Long cardId : cardListMap.keySet()) {
             CardDTO card = cardMapper.findById(cardId);
             if (card != null) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("cardId", cardId);
-                map.put("card", card);
-                map.put("cardList", cardListDTO);
-                resultList.add(map);
+                CardListDTO cardList = cardListMap.get(cardId);
 
-                seenCardIds.add(cardId); // 중복 방지용
+                Map<String, Object> flatCardInfo = new HashMap<>();
+                flatCardInfo.put("cardId", card.getId());
+                flatCardInfo.put("userId", card.getUserId());
+                flatCardInfo.put("cardName", card.getCardName());
+                flatCardInfo.put("nickname", card.getNickname());
+                flatCardInfo.put("email", card.getEmail());
+                flatCardInfo.put("job", card.getJob());
+                flatCardInfo.put("industry", card.getIndustry());
+                flatCardInfo.put("belongTo", card.getBelongTo());
+                flatCardInfo.put("department", card.getDepartment());
+                flatCardInfo.put("position", card.getPosition());
+                flatCardInfo.put("content", card.getContent());
+                flatCardInfo.put("companyTel", card.getCompanyTel());
+                flatCardInfo.put("phoneNum", card.getPhoneNum());
+                flatCardInfo.put("imgUrl", card.getImgUrl());
+                flatCardInfo.put("colour", card.getColour());
+
+                // cardList에서 필요한 정보만 추가
+                flatCardInfo.put("memo", cardList.getMemo());
+                flatCardInfo.put("favorite", cardList.getFavorite());
+
+                resultList.add(flatCardInfo);
             } else {
                 System.out.println("❗ 카드 정보 없음! cardId: " + cardId);
             }
