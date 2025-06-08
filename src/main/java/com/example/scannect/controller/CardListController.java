@@ -5,6 +5,9 @@ import com.example.scannect.common.ResponseService;
 import com.example.scannect.dto.CardDTO;
 import com.example.scannect.dto.CardListDTO;
 import com.example.scannect.service.CardListService;
+
+import lombok.Data;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,11 +42,15 @@ public class CardListController {
         return ResponseEntity.ok(responseService.success(dto, "명함이 저장되었습니다."));
     }
 
-
+    @Data
+    public class MemoUpdateRequest {
+        private String memo;
+        // getter, setter
+    }
     // 2. 메모 수정
     @PatchMapping("/{id}/memo")
-    public ResponseEntity<ApiResponse<?>> updateMemo(@PathVariable Long id, @RequestBody String memo) {
-        cardListService.updateMemo(id, memo);
+    public ResponseEntity<ApiResponse<?>> updateMemo(@PathVariable Long id, @RequestBody MemoUpdateRequest request) {
+        cardListService.updateMemo(id, request.getMemo());
         return ResponseEntity.ok(responseService.successMessage("메모가 수정되었습니다."));
     }
 

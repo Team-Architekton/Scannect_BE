@@ -5,7 +5,7 @@
 
 <mapper namespace="com.example.scannect.mapper.CardExchangeMapper">
 
-    <insert id="insertExchange" parameterType="com.example.scannect.dto.CardExchangeDTO">
+    <insert id="insertExchange" parameterType="CardExchangeDTO" useGeneratedKeys="true" keyProperty="exchangeId">
         INSERT INTO card_exchange (
             from_user_id,
             to_user_id,
@@ -22,6 +22,7 @@
             #{status}
         )
     </insert>
+
 
     <select id="findById" resultType="com.example.scannect.dto.CardExchangeDTO">
         SELECT * FROM card_exchange WHERE exchange_id = #{exchange_id}
