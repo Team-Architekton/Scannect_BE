@@ -138,7 +138,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     sendNotify(toUserId, fromUserId + "님이 명함 교환을 거절했습니다.");
                 }
 
-                sendMessageToUser(toUserId, textMessage.getPayload());
+                //sendMessageToUser(toUserId, textMessage.getPayload());
             }
 
         } catch (Exception e) {
