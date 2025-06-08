@@ -11,12 +11,14 @@ public class OpenAiConfig {
 
     @Bean
     public Dotenv dotenv() {
-        return Dotenv.load(); // .env 로딩
+        return Dotenv.configure()
+                .directory(System.getProperty("user.dir")) // 프로젝트 루트 디렉토리
+                .load();
     }
 
     @Bean
     public RestTemplate template(Dotenv dotenv) {
-        String apiKey = dotenv.get("OPENAI_API_KEY"); // .env에서 직접 꺼냄
+        String apiKey = dotenv.get("OPENAI_API_KEY");
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add((request, body, execution) -> {
             request.getHeaders().setContentType(MediaType.APPLICATION_JSON);
