@@ -1,6 +1,5 @@
 package com.example.scannect.config;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -10,15 +9,10 @@ import org.springframework.web.client.RestTemplate;
 public class OpenAiConfig {
 
     @Bean
-    public Dotenv dotenv() {
-        return Dotenv.configure()
-                .directory(System.getProperty("user.dir")) // 프로젝트 루트 디렉토리
-                .load();
-    }
+    public RestTemplate template() {
+        // Render 등 배포 환경에서도 잘 작동하도록 System.getenv 사용
+        String apiKey = System.getenv("OPENAI_API_KEY");
 
-    @Bean
-    public RestTemplate template(Dotenv dotenv) {
-        String apiKey = dotenv.get("OPENAI_API_KEY");
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add((request, body, execution) -> {
             request.getHeaders().setContentType(MediaType.APPLICATION_JSON);
