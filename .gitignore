@@ -41,3 +41,5 @@ application.properties
 !**/src/test/**/build/
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+.env
