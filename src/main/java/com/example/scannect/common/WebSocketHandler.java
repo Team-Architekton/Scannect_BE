@@ -125,7 +125,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     CardExchangeDTO e1 = new CardExchangeDTO(null, toUserId, fromUserId, fromCardId, "websocket", LocalDateTime.now(), "accepted");
                     cardExchangeMapper.insertExchange(e1);
                     cardListService.insertByWebSocket(toUserId, fromCardId);
-                    sendNotify(fromUserId, toUserId + "님의 명함이 저장되었습니다.");
+                    sendNotify(toUserId, fromUserId + "님의 명함이 저장되었습니다.");
 
                     // 수락자 입장에서: 요청자의 명함 저장
                     CardExchangeDTO e2 = new CardExchangeDTO(null, fromUserId, toUserId, toCardId, "websocket", LocalDateTime.now(), "accepted");
