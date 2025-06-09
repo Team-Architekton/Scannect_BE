@@ -46,7 +46,7 @@ public class CardListController {
         return ResponseEntity.ok(responseService.success(dto, "명함이 저장되었습니다."));
     }
 
-    @PostMapping("/save/ocr")
+    @PostMapping("/save/ocr/{userId}")
     public ResponseEntity<ApiResponse<?>> insertByOCR(@PathVariable String userId, @RequestBody CardDTO dto) {
         cardService.createCard(dto);
 
