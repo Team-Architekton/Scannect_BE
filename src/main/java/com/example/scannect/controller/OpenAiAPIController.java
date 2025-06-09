@@ -62,6 +62,8 @@ public class OpenAiAPIController {
                 "colour": null,
                 "urlList": ["https://scannect.kr", "https://woojaeng.dev"]
                 }
+
+                딱 이 Json 형식으로만 response해줘.
                 """;
         ChatGPTResponse response = aiCallService.requestImageAnalysis(image, requestText);
         return response.getChoices().get(0).getMessage().getContent();

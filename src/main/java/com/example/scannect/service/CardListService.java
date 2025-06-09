@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -164,9 +163,8 @@ public class CardListService {
                 flatCardInfo.put("imgUrl", card.getImgUrl());
                 flatCardInfo.put("colour", card.getColour());
                 flatCardInfo.put("urlList", card.getUrlList());
-
-                // 👇 cardList 쪽 필드들
-                flatCardInfo.put("cardListId", cardList.getId()); // 이름 바꿈
+                // cardList에서 필요한 정보만 추가
+                flatCardInfo.put("id", cardList.getId());
                 flatCardInfo.put("userId", cardList.getUserId());
                 flatCardInfo.put("memo", cardList.getMemo());
                 flatCardInfo.put("favorite", cardList.getFavorite());
