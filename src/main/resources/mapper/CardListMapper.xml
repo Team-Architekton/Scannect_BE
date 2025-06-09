@@ -12,7 +12,7 @@
             created_at, updated_at
         )
         VALUES (
-                   #{userId}, #{cardId}, #{favorite}, #{memo}, TRUE,
+                   #{userId}, #{cardId}, FALSE, #{memo}, TRUE,
                    NOW(), NOW()
                )
     </insert>
