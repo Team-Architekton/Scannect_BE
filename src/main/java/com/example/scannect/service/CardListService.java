@@ -134,19 +134,50 @@ public class CardListService {
         return cardDTOList;
     }
 
-    // 키워드 검색 (JOIN 포함)
-    public List<CardDTO> search(String userId, String keyword) {
+    public List<Map<String, Object>> search(String userId, String keyword) {
         List<CardListDTO> cardListDTOs = cardListMapper.searchByKeyword(userId, keyword);
-        List<CardDTO> cardDTOList = new ArrayList<>();
+        List<Map<String, Object>> resultList = new ArrayList<>();
 
+        Map<Long, CardListDTO> cardListMap = new HashMap<>();
         for (CardListDTO cardListDTO : cardListDTOs) {
-            CardDTO card = cardMapper.findById(cardListDTO.getCardId());
-            cardDTOList.add(card);
+            cardListMap.put(cardListDTO.getCardId(), cardListDTO);
         }
-        // 명함 리스트 최신순으로 정렬
-        //Collections.sort(cardDTOList, (card1, card2) -> card2.getCreatedAt().compareTo(card1.getCreatedAt()));
 
-        return cardDTOList;
+        for (Long cardId : cardListMap.keySet()) {
+            CardDTO card = cardMapper.findById(cardId);
+            if (card != null) {
+                CardListDTO cardList = cardListMap.get(cardId);
+
+                Map<String, Object> flatCardInfo = new HashMap<>();
+                flatCardInfo.put("cardId", card.getId());
+                flatCardInfo.put("cardName", card.getCardName());
+                flatCardInfo.put("nickname", card.getNickname());
+                flatCardInfo.put("email", card.getEmail());
+                flatCardInfo.put("job", card.getJob());
+                flatCardInfo.put("industry", card.getIndustry());
+                flatCardInfo.put("belongTo", card.getBelongTo());
+                flatCardInfo.put("department", card.getDepartment());
+                flatCardInfo.put("position", card.getPosition());
+                flatCardInfo.put("content", card.getContent());
+                flatCardInfo.put("companyTel", card.getCompanyTel());
+                flatCardInfo.put("phoneNum", card.getPhoneNum());
+                flatCardInfo.put("imgUrl", card.getImgUrl());
+                flatCardInfo.put("colour", card.getColour());
+                flatCardInfo.put("urlList", card.getUrlList());
+
+                // 👇 cardList 쪽 필드들
+                flatCardInfo.put("cardListId", cardList.getId()); // 이름 바꿈
+                flatCardInfo.put("userId", cardList.getUserId());
+                flatCardInfo.put("memo", cardList.getMemo());
+                flatCardInfo.put("favorite", cardList.getFavorite());
+                flatCardInfo.put("isActive", cardList.getIsActive());
+
+                resultList.add(flatCardInfo);
+            } else {
+                System.out.println("❗ 카드 정보 없음! cardId: " + cardId);
+            }
+        }
+
+        return resultList;
     }
-
 }

@@ -100,11 +100,11 @@ public class CardListController {
 
     // 9. 키워드 검색
     @GetMapping("/user/{userId}/search")
-    public ResponseEntity<ApiResponse<List<CardDTO>>> search(
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> search(
             @PathVariable String userId,
             @RequestParam String keyword
     ) {
-        List<CardDTO> list = cardListService.search(userId, keyword);
+        List<Map<String, Object>> list = cardListService.search(userId, keyword);
         return ResponseEntity.ok(responseService.success(list, "명함 검색 결과"));
     }
 }
