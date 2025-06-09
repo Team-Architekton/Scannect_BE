@@ -24,7 +24,6 @@ public class OpenAiAPIController {
 
                 JSON의 키는 다음과 같고, 명함에 적힌 정보를 각 항목에 최대한 정확하게 매핑해주세요:
 
-                - userId: null (유저 ID는 명함 이미지에 없으므로 null로 둡니다)
                 - cardName: null (명함 자체의 이름은 존재하지 않으면 null)
                 - nickname: null (유저의 닉네임이 기재된 경우)
                 - email: 명함에 적힌 이메일 주소
@@ -46,9 +45,8 @@ public class OpenAiAPIController {
                 - 이메일/전화번호/회사명 등은 OCR로 읽을 수 있는 최대한 정확하게 추출해주세요.
 
                 예상 출력 예시:
-                ```json
+
                 {
-                "userId": null,
                 "cardName": null,
                 "nickname": "우쨍",
                 "email": "woo.jaeng@company.com",
