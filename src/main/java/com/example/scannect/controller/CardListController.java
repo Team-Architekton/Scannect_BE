@@ -2,9 +2,11 @@ package com.example.scannect.controller;
 
 import com.example.scannect.common.ApiResponse;
 import com.example.scannect.common.ResponseService;
+import com.example.scannect.controller.CardListController.MemoUpdateRequest;
 import com.example.scannect.dto.CardDTO;
 import com.example.scannect.dto.CardListDTO;
 import com.example.scannect.service.CardListService;
+import com.example.scannect.service.CardService;
 
 import lombok.Data;
 
@@ -20,11 +22,13 @@ import java.util.Map;
 public class CardListController {
 
     private final CardListService cardListService;
+    private final CardService cardService;
     private final ResponseService responseService;
 
-    public CardListController(CardListService cardListService, ResponseService responseService) {
+    public CardListController(CardListService cardListService, ResponseService responseService, CardService cardService) {
         this.cardListService = cardListService;
         this.responseService = responseService;
+        this.cardService = cardService;
     }
 
     // 1. 명함 저장
@@ -40,6 +44,19 @@ public class CardListController {
     public ResponseEntity<ApiResponse<?>> insertByWebSocket(@RequestBody CardListDTO dto) {
         cardListService.insertByWebSocket(dto.getUserId(), dto.getCardId());
         return ResponseEntity.ok(responseService.success(dto, "명함이 저장되었습니다."));
+    }
+
+    @PostMapping("/save/ocr")
+    public ResponseEntity<ApiResponse<?>> insertByOCR(@PathVariable String userId, @RequestBody CardDTO dto) {
+        cardService.createCard(dto);
+
+        Long cardId = dto.getId();
+        CardListDTO cardListDTO = new CardListDTO();
+        cardListDTO.setCardId(cardId);
+        cardListDTO.setUserId(userId);
+        cardListService.save(cardListDTO);
+
+        return ResponseEntity.ok(responseService.success(cardListDTO, "명함이 저장되었습니다."));
     }
 
     @Data
