@@ -20,12 +20,12 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO card (
             user_id, card_name, nickname, email, job, industry, belong_to, department,
-            position, content, company_tel, phone_num, img_url, colour,url,
+            position, content, company_tel, phone_num, img_url, colour, url,
             is_active, is_main, created_at, updated_at
         )
         VALUES (
                    #{userId}, #{cardName}, #{nickname}, #{email}, #{job}, #{industry}, #{belongTo}, #{department},
-                   #{position}, #{content}, #{companyTel}, #{phoneNum}, #{imgUrl}, #{colour},#{url},
+                   #{position}, #{content}, #{companyTel}, #{phoneNum}, #{imgUrl}, #{colour}, #{url},
                    TRUE, FALSE, NOW(), NOW()
                )
     </insert>

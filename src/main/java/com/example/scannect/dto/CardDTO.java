@@ -21,7 +21,7 @@ public class CardDTO {
     private String phoneNum; //폰 번호
     private String imgUrl; //이미지 URL
     private String colour; //명함 색상 ->HEX 코드
-    private List<String> urlList;
+    private String url;
     private Boolean isActive; //0:숨기기, 1:활성화
     private Boolean isMain;
     private Timestamp createdAt; //생성 일자

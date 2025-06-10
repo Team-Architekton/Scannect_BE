@@ -83,7 +83,7 @@ public class CardListService {
                 flatCardInfo.put("phoneNum", card.getPhoneNum());
                 flatCardInfo.put("imgUrl", card.getImgUrl());
                 flatCardInfo.put("colour", card.getColour());
-                flatCardInfo.put("urlList", card.getUrlList());
+                flatCardInfo.put("url", card.getUrl());
                 // cardList에서 필요한 정보만 추가
                 flatCardInfo.put("id", cardList.getId());
                 flatCardInfo.put("userId", cardList.getUserId());
@@ -162,7 +162,7 @@ public class CardListService {
                 flatCardInfo.put("phoneNum", card.getPhoneNum());
                 flatCardInfo.put("imgUrl", card.getImgUrl());
                 flatCardInfo.put("colour", card.getColour());
-                flatCardInfo.put("urlList", card.getUrlList());
+                flatCardInfo.put("url", card.getUrl());
                 // cardList에서 필요한 정보만 추가
                 flatCardInfo.put("id", cardList.getId());
                 flatCardInfo.put("userId", cardList.getUserId());
