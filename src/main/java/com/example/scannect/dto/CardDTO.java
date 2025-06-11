@@ -2,7 +2,6 @@ package com.example.scannect.dto;
 
 import lombok.*;
 import java.sql.Timestamp;
-import java.util.List;
 
 @Data
 public class CardDTO {

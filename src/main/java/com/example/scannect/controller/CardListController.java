@@ -60,7 +60,7 @@ public class CardListController {
     }
 
     @Data
-    public class MemoUpdateRequest {
+    public static class MemoUpdateRequest {
         private String memo;
         // getter, setter
     }
