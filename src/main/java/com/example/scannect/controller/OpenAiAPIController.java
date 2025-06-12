@@ -35,7 +35,7 @@ public class OpenAiAPIController {
                 - content: 자기소개 문구가 있다면 전체 문장
                 - companyTel: 명함에 기재된 회사 전화번호
                 - phoneNum: 개인 핸드폰 번호
-                - url: 명함에 기재된 웹사이트 주소들을 텍스트로 추출 (없으면 빈 배열 [])
+                - url: 명함에 기재된 웹사이트 주소들을 텍스트로 추출 (String으로 반환해주세요.)
 
                 ⚠️ 주의사항:
                 - JSON 형식만 반환해주세요. 불필요한 설명 없이 딱 JSON만 응답으로 주세요.
